@@ -23,11 +23,17 @@ category <-
     q = 'Tablet')
 
 # separate product code and number
-# then add a product category number
+# then add a product category label
 refine <-
   refine %>% separate(2,
                       c('product_code', 'product_number'),
                       sep = "-",
                       remove = FALSE) %>% mutate(product_category = category[product_code])
+
+# create geocoding column by concatenating the three address fields  
+refine <-
+  refine %>% unite(full_address , address, city, country,
+                      sep = ", ",
+                      remove = FALSE) 
 
 refine
