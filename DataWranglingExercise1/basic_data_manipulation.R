@@ -63,6 +63,4 @@ for(i in 1:length(categoryCodes)) {
                                 if_else(product_category == value, 1, 0))
 }
 
-
-
-refine
+write.csv(refine, file = "./DataWranglingExercise1/refine_clean.csv")
