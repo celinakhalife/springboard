@@ -5,7 +5,7 @@ library(dplyr)
 refine <- read.csv('./DataWranglingExercise1/refine_original.csv')
 
 # supposedly, we have the list of all brands
-differentBrands = c("phillips", "akzo", "van houten", "unilever")
+differentBrands <- c("phillips", "akzo", "van houten", "unilever")
 # I'm searching for matches to the differentBrands list and
 # replacing the company value with it
 refine$company <- sapply(refine$company,
@@ -13,7 +13,7 @@ refine$company <- sapply(refine$company,
                            agrep(tolower(val),
                                  differentBrands,
                                  max.distance = 2,
-                                 value = TRUE)
+                                 value = TRUE)[1]
                          })
 
 category <-
@@ -40,14 +40,29 @@ refine <-
                    remove = FALSE)
 
 # add dummy variables
-refine <- refine %>% mutate(company_philips =
-                              case_when(company == 'phillips' ~ 1,
-                                        TRUE ~ 0)) %>%  mutate(company_akzo =
-                                                                 case_when(company == 'akzo' ~ 1,
-                                                                           TRUE ~ 0)) %>%  mutate(company_van_houten  =
-                                                                                                    case_when(company == 'van houten' ~ 1,
-                                                                                                              TRUE ~ 0)) %>%  mutate(company_unilever =
-                                                                                                                                       case_when(company == 'unilever' ~ 1,
-                                                                                                                                                 TRUE ~ 0))
+brandCodes <- gsub(" ", "_", differentBrands) %>% 
+  paste( "company_",., sep="")
+
+for(i in 1:length(brandCodes)) {
+  code <- brandCodes[i]
+  value <- differentBrands[i]
+  
+  refine <- refine %>% mutate(!!code :=
+                                if_else(company == value, 1, 0))
+}
+
+
+categoryCodes <- category %>% sapply(tolower) %>% 
+  paste( "product_",., sep="")
+
+for(i in 1:length(categoryCodes)) {
+  code <- categoryCodes[i]
+  value <- category[i]
+  
+  refine <- refine %>% mutate(!!code :=
+                                if_else(product_category == value, 1, 0))
+}
+
+
 
 refine
