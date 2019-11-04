@@ -108,12 +108,9 @@ subset <- NH11[!is.na(NH11$everwrk),]
 model <- glm(everwrk~age_p+r_maritl,
                data=subset, family="binomial")
 coef(summary(model))
-unlist(unique(subset$r_maritl))
+
 predDat <- with(subset,
-                expand.grid(r_maritl = c( "4 Widowed","7 Never married"   ,                 
-                                       "1 Married - spouse in household","5 Divorced"   ,                      
-                                       "8 Living with partner","6 Separated"   ,                     
-                                        "2 Married - spouse not in household", "9 Unknown marital status"),
+                expand.grid(r_maritl =unlist(unique(subset$r_maritl)),
                             age_p = mean(age_p, na.rm = TRUE)))
 
 
